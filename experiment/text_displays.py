@@ -32,7 +32,7 @@ def text_to_arr(text, intensity_text=0.0, intensity_background=0.2, fontsize=36)
     # Try to load the font
     try:
         # Not all machines will have Arial installed...
-        # Navdha : My laptop has it named Arial.ttf
+        # @Navdha : My laptop has it named Arial.ttf
         font = ImageFont.truetype(
             "Arial.ttf",
             fontsize,

@@ -3,7 +3,7 @@ import sys
 import stimuli
 
 
-def display_stim(ihrl, stim, intensity_target, intensity_left, intensity_right):
+def display_stim(ihrl, stim, target_left, target_right, context_left, context_right):
     """Display stimulus with specified target, context intensities
 
     Parameters
@@ -20,9 +20,9 @@ def display_stim(ihrl, stim, intensity_target, intensity_left, intensity_right):
         intensity value for the right context
     """
     if stim == "checkerboard":
-        stimulus = stimuli.checkerboard(intensity_target, intensity_left, intensity_right)
+        stimulus = stimuli.checkerboard(target_left, target_right, context_left, context_right)
     elif stim == "bullseye":
-        stimulus = stimuli.bullseye(intensity_target, intensity_left, intensity_right)
+        stimulus = stimuli.bullseye(target_left, target_right, context_left, context_right)
 
     # Convert the stimulus image(matrix) to an OpenGL texture
     stim_texture = ihrl.graphics.newTexture(stimulus["img"])
@@ -50,7 +50,7 @@ def respond(ihrl):
         return press
 
 
-def run_trial(ihrl, stim, intensity_target, intensity_left, intensity_right, **kwargs):
+def run_trial(ihrl, stim, target_left, target_right, context_left, context_right):
     """Run single trial of this experiment
 
     This function defines the structure and procedure for a single trial in this experiment.
@@ -60,7 +60,7 @@ def run_trial(ihrl, stim, intensity_target, intensity_left, intensity_right, **k
     ihrl : hrl-object
         hrl-interface object to use for display
     stim : str
-        which stimulus to display, "sbc" or "whites"
+        which stimulus to display, "checkerboard" or "bullseye"
     intensity_target : float
         intensity value for the targets
     intensity_left : float
@@ -74,12 +74,12 @@ def run_trial(ihrl, stim, intensity_target, intensity_left, intensity_right, **k
         trail results: raw resonse, and converted/processed result.
         Will be added to the trial dict, before saving.
     """
-    display_stim(ihrl, stim, intensity_target, intensity_left, intensity_right)
+    display_stim(ihrl, stim, target_left, target_right, context_left, context_right)
     response = respond(ihrl)
 
     if response == "Left":
-        result = intensity_left
+        result = context_left
     elif response == "Right":
-        result = intensity_right
+        result = context_right
 
     return {"response": response, "result": result}

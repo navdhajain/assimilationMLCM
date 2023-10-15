@@ -41,6 +41,7 @@ elif "viewpixx" in gethostname():
         "hght": 1080,
         "bg": 0.27,  # corresponding to 50 cd/m2 approx
     }
+# @Navdha: Changed it acc to my MacBook's resolution
 else:
     SETUP = {
         "graphics": "gpu",
@@ -48,8 +49,8 @@ else:
         "scrn": 0,
         "lut": None,
         "fs": False,
-        "wdth": 1920,
-        "hght": 1080,
+        "wdth": 1440, #1920,
+        "hght": 900, #1080,
         "bg": 0.3,
     }
 
@@ -62,7 +63,7 @@ def run_block(ihrl, block, block_id):
 
     # loop over trials in block
     for idx, trial in block.iterrows():
-        trial_id = trial["trial"]
+        trial_id = int(trial["trial"])
         print(f"TRIAL {trial_id}")
 
         # show a break screen automatically after so many trials
@@ -71,14 +72,15 @@ def run_block(ihrl, block, block_id):
                 ihrl,
                 trial_id,
                 (start_trial + (end_trial - start_trial))
+                
             )
 
         # current trial design variables (convert from pandas row to dict)
         trial = trial.to_dict()
-
+        print(trial)
         # run trial
         t1 = pd.Timestamp.now().strftime("%Y%m%d:%H%M%S.%f")
-        trial_results = experiment_logic.run_trial(ihrl, **trial)
+        trial_results = experiment_logic.run_trial(ihrl, stim=trial['stim'], target_left=trial['intensity_target_left'], target_right=trial['intensity_target_right'], context_left=trial['intensity_context_left'], context_right=trial['intensity_context_right'])
         trial.update(trial_results)
         t2 = pd.Timestamp.now().strftime("%Y%m%d:%H%M%S.%f")
 

@@ -51,45 +51,7 @@ def generate_block(stim_name):
 
     return block
 
-'''
-
-import data_management
-import numpy as np
-import pandas as pd
-import itertools
-import random
-import stimuli
-
-DEBUG = False
-
-nl = 8
-luminances = np.linspace(0.1, 0.9, nl).round(3)
-backgrounds=(0.0, 1.0)
-STIM_NAMES = stimuli.__all__
-
-if DEBUG:
-    print('luminances: ', luminances)
-    print('backgrounds: ', backgrounds)
-
-def generate_session(Nrepeats=5):
-    """ 
-    Generates design files for one session.
-    We think of one session corresponding to several blocks of trials.
-    You set up how many repeats you do per session with the argument
-    Nrepeats
-    """
-
-    for i in range(Nrepeats):
-        for stim_name in STIM_NAMES:
-            #print(stim_name)
-            block = generate_block()
-            block_id = f"{stim_name}-{i}"
-
-            # Save to file
-            filepath = data_management.design_filepath(block_id)
-            block.to_csv(filepath)
-
-def generate_block():
+    def generate_block():
     """ 
     Experimental design for one block of trials. 
     Here you define how many trials one block will contain, which
@@ -124,6 +86,60 @@ def generate_block():
         columns=['l1', 'bg1', 'l2', 'bg2'],
     )    
     
+
+    # Shuffle trial order
+    block = block.reindex(np.random.permutation(block.index))
+    block.reset_index(drop=True, inplace=True)
+    block.index.name = "trial"
+
+    return block
+
+'''
+
+import data_management
+import numpy as np
+import pandas as pd
+import stimuli
+#import itertools
+#import random
+
+DEBUG = False
+
+nl = 8
+luminances = np.linspace(0.1, 0.9, nl).round(3)
+backgrounds=(0.0, 1.0)
+STIM_NAMES = stimuli.__all__
+
+if DEBUG:
+    print('luminances: ', luminances)
+    print('backgrounds: ', backgrounds)
+
+def generate_session(Nrepeats=5):
+    for i in range(Nrepeats):
+        for stim_name in STIM_NAMES:
+            block = generate_block(stim_name)
+            block_id = f"{stim_name}-{i}"
+
+            # Save to file
+            filepath = data_management.design_filepath(block_id)
+            block.to_csv(filepath)
+
+
+def generate_block(stim_name):
+    # Combine all variables into full design
+    trials = [
+        (stim_name, target_left, target_right, context_left, context_right)
+        for target_left in luminances
+        for target_right in luminances
+        for context_left in backgrounds
+        for context_right in backgrounds
+    ]
+
+    # Convert to dataframe
+    block = pd.DataFrame(
+        trials,
+        columns=["stim", "intensity_target_left", "intensity_target_right", "intensity_context_left", "intensity_context_right"],
+    )
 
     # Shuffle trial order
     block = block.reindex(np.random.permutation(block.index))
