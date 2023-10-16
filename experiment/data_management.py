@@ -121,7 +121,6 @@ results_dir.mkdir(parents=True, exist_ok=True)
 # Current session (today's date)
 session_id = datetime.today().strftime("%Y%m%d")
 
-
 def design_filepath(block_id):
     """Construct filepath to design file for given block
 

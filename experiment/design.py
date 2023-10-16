@@ -100,12 +100,12 @@ import data_management
 import numpy as np
 import pandas as pd
 import stimuli
-#import itertools
-#import random
+import itertools
+import random
 
 DEBUG = False
 
-nl = 8
+nl = 10
 luminances = np.linspace(0.1, 0.9, nl).round(3)
 backgrounds=(0.0, 1.0)
 STIM_NAMES = stimuli.__all__
@@ -127,13 +127,51 @@ def generate_session(Nrepeats=5):
 
 def generate_block(stim_name):
     # Combine all variables into full design
+    '''
     trials = [
         (stim_name, target_left, target_right, context_left, context_right)
         for target_left in luminances
         for target_right in luminances
         for context_left in backgrounds
         for context_right in backgrounds
+        if not(target_left == target_right and context_left == context_right)
     ]
+    
+    trials = []
+    seen = set()
+    for t in trials1:
+        s = frozenset(t)
+        if s not in seen:
+            trials.append(t)
+    
+    print(trials)
+    print(len(trials))
+    '''
+
+    targets = [(l, b) for b in backgrounds for l in luminances]
+    stimuli_design = list(itertools.combinations(targets, 2))
+    
+    trials = []
+    for t in stimuli_design:
+        
+        t = list(t)
+        # Randomy shuffle order L-R-Down
+        if DEBUG:
+            print()
+            print(t)
+        
+        random.shuffle(t)
+        
+        if DEBUG:
+            print(t)
+        
+        # Flatten
+        t1, t2 = t
+        line = [stim_name, t1[0], t2[0], t1[1], t2[1]]
+        trials.append(line)
+
+    #print(trials)
+    #print(len(trials))
 
     # Convert to dataframe
     block = pd.DataFrame(

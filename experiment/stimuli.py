@@ -17,7 +17,7 @@ def checkerboard(target_left, target_right, context_left, context_right):
         visual_size=resolution["visual_size"],
         ppd=resolution["ppd"],
         target_indices=((1, 2), (1, 7)),
-        intensity_target=(target_left, target_right),
+        intensity_target=[target_left, target_right],
         intensity_checks=(context_left,context_right)
     )
 
@@ -25,8 +25,8 @@ def bullseye(target_left, target_right, context_left, context_right):
     return stimupy.stimuli.bullseyes.rectangular_two_sided(
         visual_size=resolution["visual_size"],
         ppd=resolution["ppd"],
-        intensity_frames=(context_left, context_right),
-        intensity_target=(target_left, target_right),
         n_frames=4,
+        intensity_frames=(context_left, context_right),
+        intensity_target=[target_left, target_right],
         intensity_background=intensity_background
     )
